@@ -17,6 +17,11 @@ class Listing extends Model
         'code',
         'street',
         'street_nr',
-        'price'
+        'price',
+        'by_user_id'
     ];
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'by_user_id');
+    }
 }

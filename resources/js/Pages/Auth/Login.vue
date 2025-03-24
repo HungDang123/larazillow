@@ -1,5 +1,5 @@
 <script setup>
-import { useForm, usePage } from "@inertiajs/vue3";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 const form = useForm({
     email: "",
     password: "",
@@ -40,6 +40,9 @@ const login = () => form.post(route("login"));
                 </div>
             <div class="mb-4">
                 <button type="submit" class="btn btn-primary w-full">Login</button>
+                <div class="mt-2 text-center">
+                    <Link :href="route('register-form')" class="text-sm text-indigo-500">Need an account? Click here</Link>
+                </div>
             </div>
         </div>
     </form>

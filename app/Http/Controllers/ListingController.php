@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Listing;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ListingController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -54,6 +57,9 @@ class ListingController extends Controller
      */
     public function show(Listing $listing)
     {
+        if(!$this->authorize('view', $listing)){
+            abort(403);
+        }
         return inertia('Listing/Show', [
             'listing' => $listing
         ]);
@@ -64,6 +70,9 @@ class ListingController extends Controller
      */
     public function edit(Listing $listing)
     {
+        if(!$this->authorize('update', $listing)){
+            abort(403);
+        }
         return inertia('Listing/Edit', [
             'listing' => $listing
         ]);
@@ -74,6 +83,9 @@ class ListingController extends Controller
      */
     public function update(Request $request, Listing $listing)
     {
+        if(!$this->authorize('update', $listing)){
+            abort(403);
+        }
         $listing->update(
            $request->validate([
                 'beds' => 'required|integer|min:1|max:20',
@@ -95,6 +107,9 @@ class ListingController extends Controller
      */
     public function destroy(Listing $listing)
     {
+        if(!$this->authorize('delete', $listing)){
+            abort(403);
+        }
         $listing->delete();
         return redirect()->back()
             ->with('success', 'Listing deleted successfully');

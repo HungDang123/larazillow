@@ -39,9 +39,15 @@ const user = computed(() => page.props.user);
       <div v-else>
         <Link
           :href="route('login')"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-2 rounded-md"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-2 rounded-md mr-2"
         >
           Login 
+        </Link>
+        <Link
+          :href="route('register-form')"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-2 rounded-md"
+        >
+          Register 
         </Link>
       </div>
     </nav>
