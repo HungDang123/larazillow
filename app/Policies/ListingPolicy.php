@@ -8,6 +8,12 @@ use App\Models\User;
 
 class ListingPolicy
 {
+    public function before(?User $user, $ability)
+    {
+        if($user && $user->is_admin){
+            return true;
+        }
+    }
     /**
      * Determine whether the user can view any models.
      */
@@ -37,7 +43,7 @@ class ListingPolicy
      */
     public function update(User $user, Listing $listing): bool
     {
-        return $user->id === $listing->by_user_id;
+        return $user->id === $listing->by_user_id ;
     }
 
     /**
@@ -45,7 +51,7 @@ class ListingPolicy
      */
     public function delete(User $user, Listing $listing): bool
     {
-        return $user->id === $listing->by_user_id;
+        return $user->id === $listing->by_user_id ;
     }
 
     /**

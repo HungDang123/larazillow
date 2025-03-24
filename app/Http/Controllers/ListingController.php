@@ -10,13 +10,25 @@ use Illuminate\Support\Facades\Auth;
 class ListingController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Listing::query();
+        $filters = $request->only(['areaFrom', 'areaTo', 'beds', 'baths', 'priceFrom', 'priceTo']);
+        if ($filters['priceFrom'] ?? false) $query->where('price', '>=', $filters['priceFrom']);
+        if ($filters['priceTo'] ?? false) $query->where('price', '<=', $filters['priceTo']);
+        if ($filters['beds'] ?? false) $query->where('beds', $filters['beds']);
+        if ($filters['baths'] ?? false) $query->where('baths', $filters['baths']);
+        if ($filters['areaFrom'] ?? false) $query->where('area', '>=', $filters['areaFrom']);
+        if ($filters['areaTo'] ?? false) $query->where('area', '<=', $filters['areaTo']);
+        $listings = $query->orderByDesc('created_at')->paginate(10);
         return inertia('Listing/Index', [
-            'listings' => Listing::all()
+            'filters' => $request->only(['areaFrom', 'areaTo', 'beds', 'baths', 'priceFrom', 'priceTo']),
+            'listings' => $listings
+                ->withQueryString(),
         ]);
     }
 
@@ -57,7 +69,7 @@ class ListingController extends Controller
      */
     public function show(Listing $listing)
     {
-        if(!$this->authorize('view', $listing)){
+        if (!$this->authorize('view', $listing)) {
             abort(403);
         }
         return inertia('Listing/Show', [
@@ -70,7 +82,7 @@ class ListingController extends Controller
      */
     public function edit(Listing $listing)
     {
-        if(!$this->authorize('update', $listing)){
+        if (!$this->authorize('update', $listing)) {
             abort(403);
         }
         return inertia('Listing/Edit', [
@@ -83,11 +95,11 @@ class ListingController extends Controller
      */
     public function update(Request $request, Listing $listing)
     {
-        if(!$this->authorize('update', $listing)){
+        if (!$this->authorize('update', $listing)) {
             abort(403);
         }
         $listing->update(
-           $request->validate([
+            $request->validate([
                 'beds' => 'required|integer|min:1|max:20',
                 'baths' => 'required|integer|min:1|max:20',
                 'area' => 'required|integer|min:15|max:1500',
@@ -107,7 +119,7 @@ class ListingController extends Controller
      */
     public function destroy(Listing $listing)
     {
-        if(!$this->authorize('delete', $listing)){
+        if (!$this->authorize('delete', $listing)) {
             abort(403);
         }
         $listing->delete();
