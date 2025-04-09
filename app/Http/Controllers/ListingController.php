@@ -18,16 +18,11 @@ class ListingController extends Controller
     {
         $query = Listing::query();
         $filters = $request->only(['areaFrom', 'areaTo', 'beds', 'baths', 'priceFrom', 'priceTo']);
-        if ($filters['priceFrom'] ?? false) $query->where('price', '>=', $filters['priceFrom']);
-        if ($filters['priceTo'] ?? false) $query->where('price', '<=', $filters['priceTo']);
-        if ($filters['beds'] ?? false) $query->where('beds', $filters['beds']);
-        if ($filters['baths'] ?? false) $query->where('baths', $filters['baths']);
-        if ($filters['areaFrom'] ?? false) $query->where('area', '>=', $filters['areaFrom']);
-        if ($filters['areaTo'] ?? false) $query->where('area', '<=', $filters['areaTo']);
         $listings = $query->orderByDesc('created_at')->paginate(10);
         return inertia('Listing/Index', [
-            'filters' => $request->only(['areaFrom', 'areaTo', 'beds', 'baths', 'priceFrom', 'priceTo']),
-            'listings' => $listings
+            'filters' => $filters,
+            'listings' => Listing::mostRecent()->filters($filters)
+                ->paginate(10)
                 ->withQueryString(),
         ]);
     }
